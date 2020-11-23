@@ -1,31 +1,24 @@
-struct _Foo<'a> {
-    bar: Option<_Bar<'a>>,
-    baz: _Baz,
+struct _SomeStruct<'a> {
+    _unused: &'a str,
 }
 
-struct _Bar<'a>(&'a _Baz);
+impl<'a> _SomeStruct<'a> {
 
-struct _Baz;
-
-impl<'a> _Foo<'a> {
     fn _new() -> Self {
-        _Foo {
-            bar: None,
-            baz: _Baz,
-        }
+        _SomeStruct { _unused: "aoeu" }
     }
 
-    fn _borrow_mut(&'a mut self) {
-        self.bar = Some(_Bar(&self.baz));
-    }
+    fn _borrow_mut(&'a mut self) {}
+
+    fn _mutate_self(&mut self) {}
 
     fn _borrow_immut(&self) {}
 
-    fn _borrow_baz(&self) -> &_Baz {
-        &self.baz
+    fn _borrow_self(&self) -> &Self {
+        self
     }
 
-    fn _borrow_mut_with_ref_baz(&mut self, _baz: &_Baz) {}
+    fn _borrow_mut_with_ref_self(&mut self, _some_struct: &Self) {}
 }
 
 #[cfg(test)]
@@ -35,15 +28,15 @@ mod tests {
 
     #[test]
     fn cannot_borrow_immut_because_borrowed_mut() {
-        let mut foo = _Foo::_new();
-        foo._borrow_mut();
-        foo._borrow_immut();
+        let mut some_struct: _SomeStruct<'_> = _SomeStruct::_new();
+        some_struct._borrow_mut();
+        some_struct._borrow_immut();
     }
 
     #[test]
     fn cannot_borrow_mut_because_borrowed_immut() {
-        let mut foo = _Foo::_new();
-        let baz = foo._borrow_baz();
-        foo._borrow_mut_with_ref_baz(baz);
+        let mut some_struct = _SomeStruct::_new();
+        let borrowed_self = some_struct._borrow_self();
+        some_struct._borrow_mut_with_ref_self(borrowed_self);
     }
 }
