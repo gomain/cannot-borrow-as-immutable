@@ -1,11 +1,14 @@
+use std::marker::PhantomData;
+
 struct _SomeStruct<'a> {
-    _unused: &'a str,
+    phantom: PhantomData<&'a ()>,
 }
 
 impl<'a> _SomeStruct<'a> {
-
     fn _new() -> Self {
-        _SomeStruct { _unused: "aoeu" }
+        _SomeStruct {
+            phantom: PhantomData,
+        }
     }
 
     fn _borrow_mut(&'a mut self) {}
